@@ -1,4 +1,6 @@
 package com.project.professor.allocation.entity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,12 +14,13 @@ import jakarta.persistence.Column;
 @Table(name = "department")
 public class Department {
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	private Long id;
 	
 	@Column(name = "name", nullable=false)
-    private String name;
+	private String name;
 
 }
 
