@@ -6,7 +6,5 @@ import com.project.professor.allocation.entity.Course;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-
-	
 	
 }
