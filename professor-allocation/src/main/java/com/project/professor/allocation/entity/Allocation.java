@@ -1,10 +1,8 @@
 package com.project.professor.allocation.entity;
 
 import java.time.DayOfWeek;
-import java.time.LocalTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.time.LocalTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,16 +21,16 @@ public class Allocation {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	private Long id;
 	
 	@Column(name = "day_of_week", nullable=false)
-    private DayOfWeek dayOfWeek;
+	private DayOfWeek dayOfWeek;
 	
 	@Column(name = "star_hour", nullable=false)
-    private LocalTime startHour;
+	private LocalTime startHour;
 	
 	@Column(name = "end_hour", nullable=false)
-    private LocalTime endHour;
+ 	private LocalTime endHour;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@ManyToOne(optional = false)
