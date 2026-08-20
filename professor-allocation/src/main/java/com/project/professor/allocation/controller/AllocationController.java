@@ -1,6 +1,9 @@
 package com.project.professor.allocation.controller;
 
 import java.util.List;
+
+import com.project.professor.allocation.dto.AllocationCreateDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +55,8 @@ public class AllocationController {
     @GetMapping(path = "/{allocation_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Allocation> findById(@PathVariable(name = "allocation_id") Long id) {
         Allocation allocation = allocationService.findById(id);
-        if (allocation == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(allocation, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(allocation, HttpStatus.OK);
+
     }
 
     @Operation(summary = "Find allocations by professor")
@@ -87,13 +87,9 @@ public class AllocationController {
     	@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Allocation> save(@RequestBody Allocation allocation) {
-        try {
-            allocation = allocationService.save(allocation);
-            return new ResponseEntity<>(allocation, HttpStatus.CREATED);
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+    public ResponseEntity<Allocation> save(@RequestBody @Valid AllocationCreateDTO allocation) {
+        Allocation allocationSaved = allocationService.save(allocation);
+        return new ResponseEntity<>(allocationSaved, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update an allocation")
@@ -106,16 +102,9 @@ public class AllocationController {
     public ResponseEntity<Allocation> update(@PathVariable(name = "allocation_id") Long id,
                                              @RequestBody Allocation allocation) {
         allocation.setId(id);
-        try {
-            allocation = allocationService.update(allocation);
-            if (allocation == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(allocation, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+        allocation = allocationService.update(allocation);
+        return new ResponseEntity<>(allocation, HttpStatus.OK);
+
     }
 
     @Operation(summary = "Delete an allocation")

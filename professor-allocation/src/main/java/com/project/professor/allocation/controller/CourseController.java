@@ -52,11 +52,7 @@ public class CourseController {
     @GetMapping(path = "/{course_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Course> findById(@PathVariable(name = "course_id") Long id) {
         Course course = courseService.findById(id);
-        if (course == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
             return new ResponseEntity<>(course, HttpStatus.OK);
-        }
     }
 
     @Operation(summary = "Save a course")
@@ -66,12 +62,8 @@ public class CourseController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Course> save(@RequestBody Course course) {
-        try {
-            course = courseService.save(course);
-            return new ResponseEntity<>(course, HttpStatus.CREATED);
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+        course = courseService.save(course);
+        return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a course")
@@ -84,16 +76,9 @@ public class CourseController {
     public ResponseEntity<Course> update(@PathVariable(name = "course_id") Long id,
                                          @RequestBody Course course) {
         course.setId(id);
-        try {
-            course = courseService.update(course);
-            if (course == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(course, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+        course = courseService.update(course);
+        return new ResponseEntity<>(course, HttpStatus.OK);
+
     }
 
     @Operation(summary = "Delete a course")

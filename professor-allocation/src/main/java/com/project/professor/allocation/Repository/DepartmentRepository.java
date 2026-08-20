@@ -11,5 +11,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long>{
 	
 	//select * from department where name like'%ia%';
 	List<Department> findByNameContaining (String partName);
+	boolean existsByName(String name);
 
 }

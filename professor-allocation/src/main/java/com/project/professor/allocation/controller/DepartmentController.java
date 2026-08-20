@@ -52,11 +52,7 @@ public class DepartmentController {
     @GetMapping(path = "/{department_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Department> findById(@PathVariable(name = "department_id") Long id) {
         Department department = departmentService.findById(id);
-        if (department == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(department, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(department, HttpStatus.OK);
     }
 
     @Operation(summary = "Save a department")
@@ -66,12 +62,8 @@ public class DepartmentController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Department> save(@RequestBody Department department) {
-        try {
             department = departmentService.save(department);
             return new ResponseEntity<>(department, HttpStatus.CREATED);
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
     }
 
     @Operation(summary = "Update a department")
@@ -84,16 +76,9 @@ public class DepartmentController {
     public ResponseEntity<Department> update(@PathVariable(name = "department_id") Long id,
                                              @RequestBody Department department) {
         department.setId(id);
-        try {
-            department = departmentService.update(department);
-            if (department == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(department, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+        department = departmentService.update(department);
+        return new ResponseEntity<>(department, HttpStatus.OK);
+
     }
 
     @Operation(summary = "Delete a department")

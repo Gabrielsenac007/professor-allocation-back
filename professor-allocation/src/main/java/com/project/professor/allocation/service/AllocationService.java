@@ -1,6 +1,13 @@
 package com.project.professor.allocation.service;
 
 import java.util.List;
+
+import com.project.professor.allocation.dto.AllocationCreateDTO;
+import com.project.professor.allocation.exceptions.Allocation.InvalidCourseException;
+import com.project.professor.allocation.exceptions.Allocation.InvalidHoursException;
+import com.project.professor.allocation.exceptions.Allocation.InvalidProfessorException;
+import com.project.professor.allocation.exceptions.AlreadyExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import com.project.professor.allocation.entity.Allocation;
 import com.project.professor.allocation.entity.Course;
@@ -29,7 +36,7 @@ public class AllocationService {
 	}
 
 	public Allocation findById(Long id) {
-		return allocationRepository.findById(id).orElse(null);
+		return allocationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Allocation not found"));
 	}
 
 	public List<Allocation> findByProfessor(Long professorId) {
@@ -44,9 +51,25 @@ public class AllocationService {
 		return allocationRepository.findByCourse(course);
 	}
 
-	public Allocation save(Allocation allocation) {
-		allocation.setId(null);
-		return saveInternal(allocation);
+	public Allocation save(AllocationCreateDTO allocation) {
+
+		Professor professor = professorService.findById(allocation.professorId());
+		if (professor == null) {
+			throw new EntityNotFoundException("Professor não encontrado.");
+		}
+
+		Course course = courseService.findById(allocation.courseId());
+		if (course == null) {
+			throw new EntityNotFoundException("Curso não encontrado.");
+		}
+		Allocation saveAllocation = Allocation.builder()
+				.professor(professor)
+				.course(course)
+				.dayOfWeek(allocation.dayOfWeek())
+				.startHour(allocation.startHour())
+				.endHour(allocation.endHour())
+				.build();
+		return saveInternal(saveAllocation);
 	}
 
 	public Allocation update(Allocation allocation) {
@@ -67,34 +90,25 @@ public class AllocationService {
 
 	private Allocation saveInternal(Allocation allocation) {
 		if (!isEndHourGreaterThanStartHour(allocation)) {
-			throw new IllegalArgumentException("O horário final deve ser maior que o horário inicial.");
+			throw new InvalidHoursException();
 		}
 
 		if (allocation.getProfessor() == null || allocation.getProfessor().getId() == null) {
-			throw new IllegalArgumentException("Professor inválido.");
+			throw new InvalidProfessorException();
 		}
 
 		if (allocation.getCourse() == null || allocation.getCourse().getId() == null) {
-			throw new IllegalArgumentException("Curso inválido.");
+			throw new InvalidCourseException();
 		}
 
-		Professor professor = professorService.findById(allocation.getProfessor().getId());
-		if (professor == null) {
-			throw new IllegalArgumentException("Professor não encontrado.");
-		}
-
-		Course course = courseService.findById(allocation.getCourse().getId());
-		if (course == null) {
-			throw new IllegalArgumentException("Curso não encontrado.");
-		}
 
 		if (hasCollision(allocation)) {
-			throw new IllegalArgumentException("O professor já possui uma alocação nesse horário.");
+			throw new AlreadyExistsException("O professor já possui uma alocação nesse horário.");
 		}
 
 		allocation = allocationRepository.save(allocation);
-		allocation.setCourse(course);
-		allocation.setProfessor(professor);
+		allocation.setCourse(allocation.getCourse());
+		allocation.setProfessor(allocation.getProfessor());
 
 		return allocation;
 	}
