@@ -1,5 +1,8 @@
 package com.project.professor.allocation.service;
 import java.util.List;
+
+import com.project.professor.allocation.exceptions.AlreadyExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import com.project.professor.allocation.Repository.DepartmentRepository;
 import com.project.professor.allocation.entity.Department;
@@ -18,11 +21,16 @@ public class DepartmentService {
 	}
 
 	public Department findById(Long id) {
-		return departmentRepository.findById(id).orElse(null);
+		return departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
 	}
 
 	public Department save(Department department) {
 		department.setId(null);
+
+		if (departmentRepository.existsByName(department.getName())){
+			throw new AlreadyExistsException();
+		}
+
 		return departmentRepository.save(department);
 	}
 
@@ -30,7 +38,7 @@ public class DepartmentService {
 		Long id = department.getId();
 
 		if (id == null || !departmentRepository.existsById(id)) {
-			return null;
+			throw new EntityNotFoundException("Department not found");
 		}
 
 		return departmentRepository.save(department);

@@ -1,6 +1,9 @@
 package com.project.professor.allocation.controller;
 
 import java.util.List;
+
+import com.project.professor.allocation.dto.ProfessorRegisterDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,11 +56,7 @@ public class ProfessorController {
     @GetMapping(path = "/{professor_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Professor> findById(@PathVariable(name = "professor_id") Long id) {
         Professor professor = professorService.findById(id);
-        if (professor == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(professor, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(professor, HttpStatus.OK);
     }
 
     @Operation(summary = "Find professors by department")
@@ -77,13 +76,9 @@ public class ProfessorController {
     	@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Professor> save(@RequestBody Professor professor) {
-        try {
-            professor = professorService.save(professor);
-            return new ResponseEntity<>(professor, HttpStatus.CREATED);
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+    public ResponseEntity<Professor> save(@RequestBody @Valid ProfessorRegisterDTO professor) {
+            Professor professorSaved = professorService.save(professor);
+            return new ResponseEntity<>(professorSaved, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a professor")
@@ -96,16 +91,10 @@ public class ProfessorController {
     public ResponseEntity<Professor> update(@PathVariable(name = "professor_id") Long id,
                                             @RequestBody Professor professor) {
         professor.setId(id);
-        try {
-            professor = professorService.update(professor);
-            if (professor == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(professor, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+
+        professor = professorService.update(professor);
+        return new ResponseEntity<>(professor, HttpStatus.OK);
+
     }
 
     @Operation(summary = "Delete a professor")
