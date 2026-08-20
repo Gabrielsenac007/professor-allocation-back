@@ -1,17 +1,12 @@
 package com.project.professor.allocation.controller;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import com.project.professor.allocation.entity.Course;
 import com.project.professor.allocation.service.CourseService;
@@ -33,14 +28,26 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @Operation(summary = "Find all courses")
-    @ApiResponses({
-    	@ApiResponse(responseCode = "200", description = "OK")
-    })
+//     antigo request para listar todos os cursos sem paginação
+//
+//    @Operation(summary = "Find all courses")
+//    @ApiResponses({
+//    	@ApiResponse(responseCode = "200", description = "OK")
+//    })
+//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<Course>> findAll() {
+//        List<Course> courses = courseService.findAll();
+//        return new ResponseEntity<>(courses, HttpStatus.OK);
+//    }
+
+    @Operation(summary = "Find All Courses w/ Pagination")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Course>> findAll() {
-        List<Course> courses = courseService.findAll();
-        return new ResponseEntity<>(courses, HttpStatus.OK);
+    public ResponseEntity<List<Course>> findAllWithPages (@RequestParam(defaultValue = "0") int page
+            , @RequestParam(defaultValue = "5") int size) {
+
+        Page<Course> pageableList = courseService.findAllWithPages(page, size);
+
+        return new ResponseEntity<>(pageableList.getContent(), HttpStatus.OK);
     }
 
     @Operation(summary = "Find a course")

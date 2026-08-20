@@ -3,6 +3,9 @@ import java.util.List;
 
 import com.project.professor.allocation.exceptions.AlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.project.professor.allocation.entity.Course;
 
@@ -18,6 +21,16 @@ public class CourseService {
 	public List<Course> findAll() {
 		return courseRepository.findAll();
 	}
+
+	public Page<Course> findAllWithPages (int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+
+		return courseRepository.findAll(pageable).map(course -> Course.builder()
+				.id(course.getId())
+				.name(course.getName())
+				.build());
+	}
+
 
 	public Course findById(Long id) {
 		return courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course not found"));
