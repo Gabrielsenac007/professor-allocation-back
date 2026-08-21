@@ -8,6 +8,9 @@ import com.project.professor.allocation.exceptions.Allocation.InvalidHoursExcept
 import com.project.professor.allocation.exceptions.Allocation.InvalidProfessorException;
 import com.project.professor.allocation.exceptions.AlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.project.professor.allocation.entity.Allocation;
 import com.project.professor.allocation.entity.Course;
@@ -33,6 +36,20 @@ public class AllocationService {
 
 	public List<Allocation> findAll() {
 		return allocationRepository.findAll();
+	}
+
+	public Page<Allocation> findAllWithPages (int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+
+		return allocationRepository.findAll(pageable).map(allocation ->
+				Allocation.builder()
+						.id(allocation.getId())
+						.course(allocation.getCourse())
+						.dayOfWeek(allocation.getDayOfWeek())
+						.startHour(allocation.getStartHour())
+						.endHour(allocation.getEndHour())
+						.professor(allocation.getProfessor())
+						.build());
 	}
 
 	public Allocation findById(Long id) {
