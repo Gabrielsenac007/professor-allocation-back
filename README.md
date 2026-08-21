@@ -4,11 +4,11 @@
 
 Grupo (Trio):
 
-Matheus Henrique José Estevam de Melo e Silva
+**Matheus Henrique José Estevam de Melo e Silva**
 
-Amanda Duarte de Almeida
+**Amanda Duarte de Almeida**
 
-Gabriel
+**Gabriel Vitor Dias Cajá da Silva**
 
 ## Requisitos do Projeto
 
