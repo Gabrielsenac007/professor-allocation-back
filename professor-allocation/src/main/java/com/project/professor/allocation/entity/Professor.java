@@ -40,7 +40,7 @@ public class Professor {
 	@JoinColumn(name = "department_id", nullable = false)
 	private Department department;
 
-	public void setDepartmentID(Long id) {
+	public void setDepartmentId(Long id) {
 		Department department = new Department();
 		department.setId(id);
 		this.setDepartment(department);
