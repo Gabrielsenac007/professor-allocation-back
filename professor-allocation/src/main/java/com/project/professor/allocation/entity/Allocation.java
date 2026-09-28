@@ -50,14 +50,14 @@ public class Allocation {
 	@JoinColumn(name = "course_id", nullable = false)
 	private Course course;
 	
-	public void setProfessorID(Long id) {
+	public void setProfessorId(Long id) {
 		Professor professor = new Professor();
 		professor.setId(id);
 		this.setProfessor(professor);
 		
 	}
 	
-	public void setCourseID(Long id) {
+	public void setCourseId(Long id) {
 		Course course = new Course();
 		course.setId(id);
 		this.setCourse(course);
